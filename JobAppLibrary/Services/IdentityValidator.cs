@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JobAppLibrary.Services
 {
-    public class IdentityValidator
+    public class IdentityValidator : IIdentityValidator
     {
         public bool IsValid(string identityNumber)
         {
