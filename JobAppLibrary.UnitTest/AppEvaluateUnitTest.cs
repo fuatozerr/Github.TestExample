@@ -71,7 +71,7 @@ namespace JobAppLibrary.UnitTest
         [Test]
         public void App_WithInValidIdentityNumber_TransferToHR()
         {
-            var mockValidator = new Mock<IIdentityValidator>();
+            var mockValidator = new Mock<IIdentityValidator>(MockBehavior.Strict);
 
             mockValidator.Setup(i => i.IsValid(It.IsAny<string>())).Returns(false);
             var evaluator = new AppEvaluator(mockValidator.Object);
