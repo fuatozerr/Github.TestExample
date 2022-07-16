@@ -33,7 +33,7 @@ namespace JobAppLibrary
                 return ApplicationResult.AutoRejected;
             if (sr > 75 && jobApp.YearsOfExperince>=autoAcceptedYearsOfExperince)
                 return ApplicationResult.AutoAccepted;
-            return ApplicationResult.AutoAccepted;
+            return ApplicationResult.AutoRejected;
         }
 
         private int GetTechStackSimilarityRate(List<string> techStacks)

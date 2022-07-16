@@ -1,6 +1,8 @@
 using JobAppLibrary.Models;
 using NUnit.Framework;
 using static JobAppLibrary.AppEvaluator;
+using Moq;
+using JobAppLibrary.Services;
 
 namespace JobAppLibrary.UnitTest
 {
@@ -10,7 +12,7 @@ namespace JobAppLibrary.UnitTest
         [Test]
         public void App_ShouldTransferredToAutoRejected_WithUnderAge()
         {
-            var evaluator = new AppEvaluator();
+            var evaluator = new AppEvaluator(null);
             var form = new JobApp()
             {
                 Applicant = new Applicant()
@@ -26,14 +28,19 @@ namespace JobAppLibrary.UnitTest
         [Test]
         public void App_WithNoTechStack_TransferredToAutoRejected()
         {
-            var evaluator = new AppEvaluator();
+            var mockValidator = new Mock<IIdentityValidator>();
+
+            mockValidator.Setup(i => i.IsValid(It.IsAny<string>())).Returns(true);
+
+            var evaluator = new AppEvaluator(mockValidator.Object);
             var form = new JobApp()
             {
                 Applicant = new Applicant()
                 {
-                    Age = 17
+                    Age = 19,
+                    IdentityNumber=""
                 },
-                TechStackList = new System.Collections.Generic.List<string>() { "s" }
+                TechStackList = new System.Collections.Generic.List<string>() { "" }
             };
             var result = evaluator.Evaluate(form);
             Assert.AreEqual(result, ApplicationResult.AutoRejected);
@@ -43,7 +50,10 @@ namespace JobAppLibrary.UnitTest
         [Test]
         public void App_WithNoTechStackOver75P_TransferredToAutAccepted()
         {
-            var evaluator = new AppEvaluator();
+            var mockValidator = new Mock<IIdentityValidator>();
+
+            mockValidator.Setup(i => i.IsValid(It.IsAny<string>())).Returns(true);
+            var evaluator = new AppEvaluator(mockValidator.Object);
             var form = new JobApp()
             {
                 Applicant = new Applicant()
@@ -55,6 +65,27 @@ namespace JobAppLibrary.UnitTest
             };
             var result = evaluator.Evaluate(form);
             Assert.AreEqual(result, ApplicationResult.AutoAccepted);
+
+        }
+
+        [Test]
+        public void App_WithInValidIdentityNumber_TransferToHR()
+        {
+            var mockValidator = new Mock<IIdentityValidator>();
+
+            mockValidator.Setup(i => i.IsValid(It.IsAny<string>())).Returns(false);
+            var evaluator = new AppEvaluator(mockValidator.Object);
+            var form = new JobApp()
+            {
+                Applicant = new Applicant()
+                {
+                    Age = 21
+                },
+                TechStackList = new System.Collections.Generic.List<string>() { "C#", "RabbitMq", "MicroService", "Visual Studio" },
+                YearsOfExperince = 16
+            };
+            var result = evaluator.Evaluate(form);
+            Assert.AreEqual(result, ApplicationResult.TransferredToHR);
 
         }
     }
