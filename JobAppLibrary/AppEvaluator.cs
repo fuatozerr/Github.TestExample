@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JobAppLibrary.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,11 @@ namespace JobAppLibrary
 {
     public class AppEvaluator
     {
-        public ApplicationResult Evaluate()
+        private const int minAge = 18;
+        public ApplicationResult Evaluate(JobApp jobApp)
         {
+            if (jobApp.Applicant.Age < minAge)
+                return ApplicationResult.AutoRejected;
             return ApplicationResult.AutoAccepted;
         }
 
