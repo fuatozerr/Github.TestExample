@@ -31,7 +31,7 @@ namespace JobAppLibrary.UnitTest
             {
                 Applicant = new Applicant()
                 {
-                    Age = 21
+                    Age = 17
                 },
                 TechStackList = new System.Collections.Generic.List<string>() { "s" }
             };

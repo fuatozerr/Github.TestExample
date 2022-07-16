@@ -1,4 +1,5 @@
 ﻿using JobAppLibrary.Models;
+using JobAppLibrary.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,22 @@ namespace JobAppLibrary
         private const int minAge = 18;
         private List<string> techStackList = new List<string>() { "C#", "RabbitMq", "MicroService", "Visual Studio" };
         private const int autoAcceptedYearsOfExperince = 15;
+
+        private IdentityValidator identityValidator;
+
+        public AppEvaluator()
+        {
+            identityValidator = new IdentityValidator();
+        }
         public ApplicationResult Evaluate(JobApp jobApp)
         {
             if (jobApp.Applicant.Age < minAge)
                 return ApplicationResult.AutoRejected;
 
+            var validIdentity = identityValidator.IsValid(jobApp.Applicant.IdentityNumber);
+
+            if (!validIdentity)
+                return ApplicationResult.TransferredToHR;
             var sr = GetTechStackSimilarityRate(techStackList);
             if (sr < 25)
                 return ApplicationResult.AutoRejected;
